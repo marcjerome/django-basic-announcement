@@ -10,11 +10,15 @@ class AnnouncerTest(FunctionalTest):
         # He logged in first
         
         self.browser.get(self.live_server_url)
-        username = self.browser.find_element_by_id('id_login')
+        username = self.browser.find_element_by_id('id_username')
         username.send_keys('admin')
 
         password = self.browser.find_element_by_id('id_password')
         password.send_keys('password123')
         password.send_keys(Keys.ENTER)
+
+        # He is redirected to the announcement admin page
+        page_heading = self.browser.find_element_by_id('head')
+        self.assertEqual(page_heading, 'Announcement admin')
 
     
