@@ -22,4 +22,6 @@ class AnnouncerTest(FunctionalTest):
 
         # He wants to announce that there will be site maintainance  so he 
         # filled up the form and announce it
+
+        
     
