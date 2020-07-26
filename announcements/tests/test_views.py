@@ -22,3 +22,9 @@ class HomeViewTest(TestCase):
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
 
+    def test_can_save_post_request(self):
+        self.client.login(username='admin', password='pass@123')
+        response = self.client.post('announcement/add', data={'text': 'Website down'})
+        self.assertEqual(Announcement.objects.count(), 1)
+        new_announcement = Announcement.objects.first()
+        self.assertEqual(new_announcement.text, 'Website down')

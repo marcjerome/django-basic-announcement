@@ -22,6 +22,8 @@ class AnnouncerTest(FunctionalTest):
 
         # He wants to announce that there will be site maintainance  so he 
         # filled up the form and announce it
-
-        
+        announcement_inputbox = self.browser.find_element_by_id('id_announcement_text')
+        announcement_inputbox.send_keys('We will have a website maintainance tomorrow')
+        announcement_inputbox.send_keys(Keys.ENTER)
+                
     
