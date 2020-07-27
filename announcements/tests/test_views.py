@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
+from announcements.models import Announcement
 
 class HomeViewTest(TestCase):
     def setUp(self):

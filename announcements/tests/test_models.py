@@ -1,5 +1,6 @@
 from django.test import TestCase
-from datetime import datetime
+from datetime import date
+from announcements.models import Announcement
 
 class AnnouncementModelTest(TestCase):
 
@@ -13,4 +14,5 @@ class AnnouncementModelTest(TestCase):
 
     def test_default_date(self):
         announcement = Announcement()
-        self.assertEqual(announcement.date, datetime.now())
+        announcement.save()
+        self.assertEqual(announcement.date, date.today())
