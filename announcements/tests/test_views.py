@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from announcements.models import Announcement
+from announcements.forms import AnnouncementForm
 
 class HomeViewTest(TestCase):
     def setUp(self):
@@ -29,3 +30,8 @@ class HomeViewTest(TestCase):
         self.assertEqual(Announcement.objects.count(), 1)
         new_announcement = Announcement.objects.first()
         self.assertEqual(new_announcement.text, 'Website down')
+
+    def test_announcement_form_in_view(self):
+        self.client.login(username='admin', password='pass@123')
+        response = self.client.get('/')
+        self.assertIsInstance(response.context['form'], AnnouncementForm)
