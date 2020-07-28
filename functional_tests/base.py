@@ -8,13 +8,12 @@ MAX_WAIT = 10
 
 class FunctionalTest(StaticLiveServerTestCase):
 
-    def  wait_for_text_assert(self, text):
+    def  wait_for_element(self, text_location):
         start_time = time.time()
         while True:
             try:
-                heading = self.browser.find_element_by_id('head')
-                self.assertEqual(heading.text, text)
-                return
+                element = self.browser.find_element_by_class_name(text_location)
+                return element
             except (AssertionError, WebDriverException) as e:
                 if time.time() - start_time > MAX_WAIT:
                     raise e
