@@ -1,11 +1,17 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import AnnouncementForm
+from .models import Announcement
 
 @login_required
 def home(request):
     form = AnnouncementForm()
-    return render(request, 'home.html', {'form': form})
+    annoucements = Announcement.objects.all()
+    context = {
+        'form': form,
+        'announcements': annoucements,
+    }
+    return render(request, 'home.html', context)
 
 @login_required
 def add_announcement(request):
