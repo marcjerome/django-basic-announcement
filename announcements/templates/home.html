@@ -1,10 +1,16 @@
 {% include 'base.html' %}
 
 {% block content %}
-<h1 id="head">Announcement admin</h1>
+<h1 class="head">Announcement admin</h1>
 <form action="{% url 'add_announcement' %}" method="POST" >
     {{form}}
     {%csrf_token%}
     <input type="submit" name="submit" value="Add announcement">
 </form>
+
+{% if announcements %}
+    {% for announcement in announcements %}
+        <p class="announcement_text">{{announcement.text}}</p>
+    {% endfor%}
+{% endif %}
 {% endblock %}
