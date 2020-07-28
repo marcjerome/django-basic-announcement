@@ -42,3 +42,18 @@ class AnnouncementAddViewTest(TestCase):
         self.assertEqual(Announcement.objects.count(), 1)
         new_announcement = Announcement.objects.first()
         self.assertEqual(new_announcement.text, 'Website down')
+
+class AnnouncementDeleteViewTest(TestCase):
+
+    def setUp(self):
+        User = get_user_model()
+        self.user = User.objects.create_user(username='admin', password='pass@123', email='admin@admin.com')
+        self.client = Client()
+
+    def test_can_delete_added_announcement(self):
+        self.client.login(username='admin', password='pass@123')
+        self.client.post('/announcement/add/', data={'text': 'Website down'})
+        
+        new_announcement = Announcement.objects.first()
+        self.client.post(f'/announcement/delete/{new_announcement.id}/')
+        self.assertEqual(Announcement.objects.count(), 0)
