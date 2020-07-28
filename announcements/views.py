@@ -20,3 +20,12 @@ def add_announcement(request):
         if form.is_valid():
             form.save()
     return redirect('home')
+
+@login_required
+def delete_announcement(request, pk):
+    try:
+        announcement = Announcement.objects.get(id=pk)
+        announcement.delete()
+    except Announcement.DoesNotExist:
+        pass
+    return redirect('home')
