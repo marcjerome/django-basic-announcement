@@ -28,6 +28,11 @@ class HomeViewTest(TestCase):
         self.client.login(username='admin', password='pass@123')
         response = self.client.get('/')
         self.assertIsInstance(response.context['form'], AnnouncementForm)
+    
+    def test_redirects_to_home_if_unauthenticated(self):
+        response = self.client.post(f'/announcement/delete/0/')
+        self.assertEqual(response.status_code, 302)
+    
 
 class AnnouncementAddViewTest(TestCase):
 
@@ -35,6 +40,10 @@ class AnnouncementAddViewTest(TestCase):
         User = get_user_model()
         self.user = User.objects.create_user(username='admin', password='pass@123', email='admin@admin.com')
         self.client = Client()
+    
+    def test_redirects_to_home_if_unauthenticated(self):
+        response = self.client.post(f'/announcement/delete/0/')
+        self.assertEqual(response.status_code, 302) 
 
     def test_can_save_post_request(self):
         self.client.login(username='admin', password='pass@123')
@@ -57,3 +66,8 @@ class AnnouncementDeleteViewTest(TestCase):
         new_announcement = Announcement.objects.first()
         self.client.post(f'/announcement/delete/{new_announcement.id}/')
         self.assertEqual(Announcement.objects.count(), 0)
+    
+    def test_redirects_to_home_if_unauthenticated(self):
+        response = self.client.post(f'/announcement/delete/0/')
+        self.assertEqual(response.status_code, 302)
+    
