@@ -78,14 +78,14 @@ class AnnouncementUpdateViewTest(TestCase):
         self.user = User.objects.create_user(username='admin', password='pass@123', email='admin@admin.com')
         self.client = Client()
     
-    def test_can_update_added_announcement(self):
+    def test_can_update_announcement(self):
         self.client.login(username='admin', password='pass@123')
                 
         new_announcement = Announcement()
         new_announcement.save()
 
-        self.client.post('/announcement/update/0/', data={'text': 'Website down'})
-        updated_announcement = Announcement.objects.first()
+        self.client.post(f'/announcement/update/{new_announcement.id}/', data={'text': 'Website down'})
+        updated_announcement = Announcement.objects.get(id=new_announcement.id)
         self.assertEqual(updated_announcement.text, 'Website down')
     
     def test_redirects_to_home_if_unauthenticated(self):
@@ -93,8 +93,19 @@ class AnnouncementUpdateViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
     
     def test_update_view_uses_correct_form(self):
+        self.client.login(username='admin', password='pass@123')
+
         new_announcement = Announcement()
         new_announcement.save()
 
-        response = self.client.post(f'/announcement/update/0/')
+        response = self.client.get(f'/announcement/update/{new_announcement.id}/')
         self.assertIsInstance(response.context['form'], AnnouncementForm)
+    
+    def test_update_uses_proper_template(self):
+        self.client.login(username='admin', password='pass@123')
+        
+        new_announcement = Announcement()
+        new_announcement.save()
+
+        response = self.client.get(f'/announcement/update/{new_announcement.id}/')
+        self.assertTemplateUsed(response, 'update.html')

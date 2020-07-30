@@ -1,6 +1,8 @@
 from .base import FunctionalTest
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
+import time 
+
 class AnnouncerTest(FunctionalTest):
 
 
@@ -23,7 +25,7 @@ class AnnouncerTest(FunctionalTest):
 
         # He wants to announce that there will be site maintainance  so he 
         # filled up the form and announce it
-        announcement_inputbox = self.browser.find_element_by_id('id_text')
+        announcement_inputbox = self.wait_for_element_by_id('id_text')
         announcement_inputbox.send_keys('We will have a website maintainance tomorrow')
         announcement_inputbox.send_keys(Keys.ENTER)
                 
@@ -39,17 +41,18 @@ class AnnouncerTest(FunctionalTest):
             element = self.wait_for_element('announcement_text')
 
         # After a while, he posts another announcement. This time it's confirmed it's gonna happen
-        announcement_inputbox = self.browser.find_element_by_id('id_text')
+        announcement_inputbox = self.wait_for_element_by_id('id_text')
         announcement_inputbox.send_keys('NCov-19 Update: The business operations of the company will be limited until a vaccine is found')
         announcement_inputbox.send_keys(Keys.ENTER)
                 
         # He then realizes that there's an established name for the virus already so he updates it
-        update_latest_announcement = self.browser.find_element_by_class_name('updateButton')
+        update_latest_announcement = self.wait_for_element('updateButton')
         update_latest_announcement.click()
 
         # The site redirected him to an update page filled up with the data from the previous page
-        announcement_inputbox = self.browser.find_element_by_id('id_text')
-        self.assertEqual(announcement_inputbox.text,'NCov-19 Update: The business operations of the company will be limited until a vaccine is found')
+        announcement_inputbox = self.wait_for_element_by_id('id_text')
+        print(announcement_inputbox.text)
+        self.assertEqual(announcement_inputbox.get_attribute('value'),'NCov-19 Update: The business operations of the company will be limited until a vaccine is found')
 
         # He clears the input box and updates the announcement
         announcement_inputbox.clear()
