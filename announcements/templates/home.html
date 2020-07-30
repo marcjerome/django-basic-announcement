@@ -11,6 +11,7 @@
 {% if announcements %}
     {% for announcement in announcements %}
         <p class="announcement_text">{{announcement.text}}</p>
+        <a href="{% url 'delete_announcement' announcement.id %}" class="deleteButton">Delete</a>
     {% endfor%}
 {% endif %}
 {% endblock %}
