@@ -29,3 +29,17 @@ def delete_announcement(request, pk):
     except Announcement.DoesNotExist:
         pass
     return redirect('home')
+
+def update_announcement(request, pk):
+    form = AnnouncementForm(request.POST)
+    if request.method == 'POST':
+        if form.is_valid():
+            announcement = Announcement.objects.get(id=pk)
+            announcement.text = form.cleaned_data['text']
+            announcement.save()
+        return redirect('home')
+    
+    return render(request, 'update.html', {'form': form } )
+
+
+        
