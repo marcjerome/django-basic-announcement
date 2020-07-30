@@ -1,6 +1,6 @@
 from .base import FunctionalTest
 from selenium.webdriver.common.keys import Keys
-
+from selenium.common.exceptions import NoSuchElementException
 class AnnouncerTest(FunctionalTest):
 
 
@@ -31,8 +31,31 @@ class AnnouncerTest(FunctionalTest):
         element = self.wait_for_element('announcement_text')
         self.assertEqual(element.text, 'We will have a website maintainance tomorrow')
 
-        delete_latest_announcement = self.browser.find_element_by_class_name('deleteButton')[0]
+        # He deletes it because the event that was announced was cancelled
+        delete_latest_announcement = self.browser.find_element_by_class_name('deleteButton')
         delete_latest_announcement.click()
 
-        element = self.browser.find_element_by_class_name('announcement_text')
-        self.assertFalse(element.is_displayed())
+        with self.assertRaises(NoSuchElementException):
+            element = self.wait_for_element('announcement_text')
+
+        # After a while, he posts another announcement. This time it's confirmed it's gonna happen
+        announcement_inputbox = self.browser.find_element_by_id('id_text')
+        announcement_inputbox.send_keys('NCov-19 Update: The business operations of the company will be limited until a vaccine is found')
+        announcement_inputbox.send_keys(Keys.ENTER)
+                
+        # He then realizes that there's an established name for the virus already so he updates it
+        update_latest_announcement = self.browser.find_element_by_class_name('updateButton')
+        update_latest_announcement.click()
+
+        # The site redirected him to an update page filled up with the data from the previous page
+        announcement_inputbox = self.browser.find_element_by_id('id_text')
+        self.assertEqual(announcement_inputbox.text,'NCov-19 Update: The business operations of the company will be limited until a vaccine is found')
+
+        # He clears the input box and updates the announcement
+        announcement_inputbox.clear()
+        announcement_inputbox.send_keys('Covid-19 Update: The business operations of the company will be limited until a vaccine is found')
+        announcement_inputbox.send_keys(Keys.ENTER)
+
+        # Finally, he sees his announcement correct in the announcement home page
+        element = self.wait_for_element('announcement_text')
+        self.assertEqual(element.text, 'Covid-19 Update: The business operations of the company will be limited until a vaccine is found')

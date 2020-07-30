@@ -61,9 +61,9 @@ class AnnouncementDeleteViewTest(TestCase):
 
     def test_can_delete_added_announcement(self):
         self.client.login(username='admin', password='pass@123')
-        self.client.post('/announcement/add/', data={'text': 'Website down'})
         
-        new_announcement = Announcement.objects.first()
+        new_announcement = Announcement()
+        new_announcement.save()
         self.client.post(f'/announcement/delete/{new_announcement.id}/')
         self.assertEqual(Announcement.objects.count(), 0)
     
@@ -71,3 +71,30 @@ class AnnouncementDeleteViewTest(TestCase):
         response = self.client.post(f'/announcement/delete/0/')
         self.assertEqual(response.status_code, 302)
     
+class AnnouncementUpdateViewTest(TestCase):
+
+    def setUp(self):
+        User = get_user_model()
+        self.user = User.objects.create_user(username='admin', password='pass@123', email='admin@admin.com')
+        self.client = Client()
+    
+    def test_can_update_added_announcement(self):
+        self.client.login(username='admin', password='pass@123')
+                
+        new_announcement = Announcement()
+        new_announcement.save()
+
+        self.client.post('/announcement/update/0/', data={'text': 'Website down'})
+        updated_announcement = Announcement.objects.first()
+        self.assertEqual(updated_announcement.text, 'Website down')
+    
+    def test_redirects_to_home_if_unauthenticated(self):
+        response = self.client.post(f'/announcement/update/0/')
+        self.assertEqual(response.status_code, 302)
+    
+    def test_update_view_uses_correct_form(self):
+        new_announcement = Announcement()
+        new_announcement.save()
+
+        response = self.client.post(f'/announcement/update/0/')
+        self.assertIsInstance(response.context['form'], AnnouncementForm)
