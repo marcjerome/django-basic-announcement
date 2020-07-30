@@ -30,16 +30,19 @@ def delete_announcement(request, pk):
         pass
     return redirect('home')
 
+@login_required
 def update_announcement(request, pk):
-    form = AnnouncementForm(request.POST)
+    announcement = Announcement.objects.get(id=pk)
+
     if request.method == 'POST':
+        form = AnnouncementForm(request.POST)
         if form.is_valid():
-            announcement = Announcement.objects.get(id=pk)
             announcement.text = form.cleaned_data['text']
             announcement.save()
         return redirect('home')
-    
-    return render(request, 'update.html', {'form': form } )
+    elif request.method == 'GET':
+        form = AnnouncementForm(initial={'text': announcement.text})        
+    return render(request, 'update.html', {'form': form,  'announcement': announcement} )
 
 
         
